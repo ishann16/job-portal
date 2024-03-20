@@ -24,6 +24,7 @@ export default function Home() {
 
     return (
         <main>
+            <h1>View Jobs</h1>
             <div className="cards">
                 {jobs.map((job) => (
                     <div key={job._id}>
