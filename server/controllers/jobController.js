@@ -41,25 +41,43 @@ export const viewAllJobs = async(req, res) =>{
         res.status(500).json({ message: "Error occurred while getting job!", error });
     }
 }
-
-export const updateJob = async(req, res) =>{
-    const {id} = req.params;
-    const updatedJob = req.body;
-
+// Function to fetch a single job by its ID
+export async function getJobById(jobId) {
     try {
-        const result = await Job.updateOne({ _id: id }, updatedJob);
-
-        if (result.modifiedCount > 0) {
-			const newJob = await Job.findById(id);
-			res.status(201).json({ message: "Job updated successfully", newJob });
-		} else {
-			res.status(201).json({ message: "Job not found or not updated!" });
-		}
+      const response = await fetch(`/api/jobs/${jobId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch job data');
+      }
+      const jobData = await response.json();
+      return jobData;
     } catch (error) {
-        console.error("Error updating job:", error);
-		res.status(500).json({ message: "Error occurred while creating job!", error });
+      console.error('Error fetching job data:', error);
+      throw error;
     }
-}
+  }
+  
+  // Function to update a job
+  export async function updateJob(jobId, newData) {
+    try {
+      const response = await fetch(`/api/jobs/${jobId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newData),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update job');
+      }
+      const updatedJob = await response.json();
+      return updatedJob;
+    } catch (error) {
+      console.error('Error updating job:', error);
+      throw error;
+    }
+  }
+  
+
 
 export const deleteJob = async(req, res) =>{
     const {id} = req.params;
