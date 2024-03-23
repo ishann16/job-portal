@@ -14,7 +14,7 @@ interface Job {
 
 
 const fetchJobs = async (): Promise<Job[]> => {
-  const response = await fetch('https://your-api-endpoint.com/jobs');
+  const response = await fetch('https://job-portal-sage-nu.vercel.app/jobs');
   const data = await response.json();
   return data as Job[];
 };
