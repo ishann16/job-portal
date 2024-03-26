@@ -37,7 +37,7 @@ export default function Home() {
 
     const getAllJobs = async () => {
         try {
-            const res = await axios.get<{ jobs: Job[] }>('http://localhost:5000/api/view-all');
+            const res = await axios.get<{ jobs: Job[] }>('https://job-portal-sage-nu.vercel.app/api/view-all');
             console.log(res.data.jobs);
             setJobs(res.data.jobs);
         } catch (error: any) {
