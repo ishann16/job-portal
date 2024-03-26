@@ -22,14 +22,13 @@ const Form = () => {
         console.log("Form submitted", jobData);
 
         try {
-            const res = await axios.post('https://job-portal-sage-nu.vercel.app/api/admin/add', jobData); // Adjust the API endpoint according to your backend setup
+            const res = await axios.post('https://job-portal-sage-nu.vercel.app/api/admin/add', jobData);
             console.log("API response:", res.data); // Assuming the response contains data
             setJobData(defaultJob);
             alert("Job Details Added");
         } catch (error) {
             console.error("Error:", error);
         }
-        // Here you can do something with the form data, such as sending it to a server
     };
 
     return (

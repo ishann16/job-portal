@@ -1,7 +1,7 @@
 'use client';
+import React, { useEffect, useState } from 'react';
 import axios from "axios";
-import Link from "next/link";
-import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const itemsPerPage = 9;
 
@@ -14,34 +14,42 @@ interface Job {
     description: string;
 }
 
-export default function Home() {
+
+
+const Home: React.FC = () => {
     const [jobs, setJobs] = useState<Job[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [showDeletePopup, setShowDeletePopup] = useState(false); // State for delete pop-up
 
-    // Calculate the index range for the current page
     const indexOfLastJob = currentPage * itemsPerPage;
     const indexOfFirstJob = indexOfLastJob - itemsPerPage;
 
-    // Reverse the jobs array to ensure new jobs appear first
     const reversedJobs = [...jobs].reverse();
-
     const currentJobs = reversedJobs.slice(indexOfFirstJob, indexOfLastJob);
 
-    // Change page
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
     useEffect(() => {
-        console.log("hello");
         getAllJobs();
     }, []);
 
     const getAllJobs = async () => {
         try {
             const res = await axios.get<{ jobs: Job[] }>('https://job-portal-sage-nu.vercel.app/api/view-all');
-            console.log(res.data.jobs);
             setJobs(res.data.jobs);
         } catch (error: any) {
             console.log("error while getting all jobs", error.message);
+        }
+    };
+
+    const removeJob = async (id: string) => {
+        try {
+            await axios.delete(`https://job-portal-sage-nu.vercel.app/api/admin/delete/${id}`);
+            setJobs(prevJobs => prevJobs.filter(job => job._id !== id)); 
+            setShowDeletePopup(true); 
+            setTimeout(() => setShowDeletePopup(false), 0); 
+            alert("Job Deleted");
+        } catch (error: any) {
+            console.log("error while deleting job", error.message);
         }
     };
 
@@ -60,12 +68,12 @@ export default function Home() {
                         </div>
                         <div className="flex flex-col items-center justify-center mb-4 mt-4">
                         <Link href="/UpdateJob">
-                            <button className="flex items-center overflow-hidden justify-center w-full h-full p-3"  style={{ backgroundColor: "orange", borderRadius: "20px"}}>
-                                Update
-                            </button></Link>
-                            <Link href="/delete-job"><button className="flex items-center overflow-hidden  justify-center w-600 h-full mt-4 p-3"  style={{ backgroundColor: "orange", borderRadius: "20px"}}>
+                            <button className="flex items-center overflow-hidden justify-center w-600 h-full mt-4 p-3" style={{ backgroundColor: "orange", borderRadius: "20px"}}>
+                                Update</button>
+                        </Link>
+                            <button onClick={() => removeJob(job._id)} className="flex items-center overflow-hidden  justify-center w-600 h-full mt-4 p-3"  style={{ backgroundColor: "orange", borderRadius: "20px"}}>
                                 Delete
-                            </button></Link>
+                            </button>
                         </div>
                     </div>
                 ))}
@@ -78,3 +86,4 @@ export default function Home() {
         </main>
     );
 }
+export default Home;
